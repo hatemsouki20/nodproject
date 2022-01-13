@@ -63,22 +63,32 @@ exports.singiInclienet =  async (req, res,next) =>
     const role ="client";
    const username = req.body.username;
 
-    if ( !pwd || !role || !username) {
+    if ( (!pwd || !role || !email) && (!pwd || !role || !username) ) {
         return res.status(400).send({
             message:" MSG.DATA_MISSING",
+
         });
     }
 
-    User.findOne({ where: {username : username , role: role }    })
+    const condition = {role: role}
+    if (username) {
+        condition.username = username;
+    }
+    if (email) {
+        condition.email = email;
+    }
+    User.findOne({ where: condition }  )
         .then((user) => {
             if (!user) {
                 return res.status(401).send({
                     message: "MSG.USER_NOT_FOUND",
                 });
+
             }
             bcrypt
                 .compare(pwd, user.pwd)
                 .then(async (valid) => {
+
                     if (!valid) {
                         return res.status(401).send({
                             message: "erreur 401",
@@ -94,6 +104,7 @@ exports.singiInclienet =  async (req, res,next) =>
 
                             email: user.dataValues.email,
                             token: token,
+
                             idUser: user.dataValues.id,
                         };
                         if (role === "client") {
@@ -117,6 +128,7 @@ exports.singiInclienet =  async (req, res,next) =>
                 message: "MSG.SQL_ERROR",
 
             });
+
         });
 }
 
