@@ -10,6 +10,12 @@ module.exports =(sequelise , Sequelise)  =>{
 
         },
 
+         role_partner:{
+             type : Sequelise.STRING ,
+         }   ,
+        name_company:{
+            type : Sequelise.STRING ,
+        },
 
         address:{
             type : Sequelise.STRING ,

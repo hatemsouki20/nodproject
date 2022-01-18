@@ -1,7 +1,7 @@
 const db = require("../models");
 const config = require("../config/auth.config");
 const User = db.user;
-const Client = db.client;
+const Partner = db.partner;
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const randomstring = require("randomstring");
@@ -9,19 +9,19 @@ const nodemailer = require("nodemailer");
 
 
 /*********************** Enregistrement **************/
-exports.singup =  async (req, res,next) =>
+exports.create =  async (req, res,next) =>
 {
 
     console.log(req.body.user.role);
 
-   /* const user ={
-        username : req.body.username ,
+    /* const user ={
+         username : req.body.username ,
 
-        email : req.body.email,
-        pwd :req.body.pwd,
-        role: "client"
-    }*/
-   const  pwd = req.body.user.pwd;
+         email : req.body.email,
+         pwd :req.body.pwd,
+         role: "client"
+     }*/
+    const  pwd = req.body.user.pwd;
     bcrypt.hash(pwd, 10).then((hash) => {
         User.create({
             username: req.body.user.username,
@@ -31,23 +31,25 @@ exports.singup =  async (req, res,next) =>
             role: req.body.user.role,
 
         }).then((data) => {
-            const role = "client";
+            const role = "partner";
             const token = jwt.sign({userId: data.id, role}, config.secret, {
                 noTimestamp: true,
                 expiresIn: "24h",
             });
             console.log("from signup", jwt.verify(token, config.secret))
-            Client.create(
+            Partner.create(
                 {
                     firstName: req.body.firstName,
                     lastName: req.body.lastName,
+                    role_partner: req.body.role_partner,
+                    name_company:req.body.name_company,
                     address: req.body.address,
                     phone: req.body.phone,
                     userId: data.id
                 }
-            ).then((clien) => {
+            ).then((partne) => {
 
-                    return res.status(200).send({clien, data: token});
+                    return res.status(200).send({partne, data: token});
 
                 }
             );
@@ -58,15 +60,15 @@ exports.singup =  async (req, res,next) =>
 
 
 /*************Connection *******/
-exports.singiInclienet =  async (req, res,next) =>
+exports.singiInPartner =  async (req, res,next) =>
 {
-  console.log(req.body);
-  const email = req.body.email;
+    console.log(req.body);
+    const email = req.body.email;
     const pwd = req.body.pwd;
-    const role ="client";
-   const username = req.body.username;
+    const role ="partner";
+    const username = req.body.username;
 
-    if ( (!pwd || !email) && (!pwd || !username) ) {
+    if ( (!pwd || !role || !email) && (!pwd || !role || !username) ) {
         return res.status(400).send({
             message:" MSG.DATA_MISSING",
 
@@ -136,32 +138,32 @@ exports.singiInclienet =  async (req, res,next) =>
 }
 
 
-exports.getClientByID = (req, res, next) => {
+exports.getPartnerByID = (req, res, next) => {
     const { userId } = req.params;
-  console.log(req.params);
+    console.log(req.params);
     User.findByPk(userId)
         .then((data) => {
             if (data) {
-                 Client.findByPk(userId).then((clien) =>{
-                     const log ={
-                         username: data.username,
-                         email: data.email
-                     }
+                Partner.findByPk(userId).then((dats) => {
+                    const log ={
+                        username: data.username,
+                        email: data.email
+                    }
 
-                     const client = {
-                         firstName: clien.firstName,
-                         lastName: clien.lastName,
-                         address: clien.address,
-                         phone: clien.phone,
-
-
-                     };
-                     return res.status(200).send({
-                         clien: client,
-                         data: log,
+                    const partner = {
+                        firstName: partner.firstName,
+                        lastName: partner.lastName,
+                        address: partner.address,
+                        phone: partner.phone,
 
 
-                 })});
+                    };
+                    return res.status(200).send({
+                        dats: partner,
+                        data: log,
+
+
+                    })});
 
 
             } else {
@@ -259,7 +261,7 @@ exports.changePWD = (req, res, next) => {
     const pwd = req.body.pwd;
     const email = req.body.email;
     const role = "client";
-  console.log(req.body)
+    console.log(req.body)
     if (!code || !pwd || !email || !role) {
         return res.status(400).send({
             message: "MSG.DATA_MISSING",

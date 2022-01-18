@@ -9,12 +9,13 @@ const db = require ("./models");
 
 
 require("./routers/produitrouters")(app);
-require("./routers/clientRouts")(app)
+require("./routers/clientRouts")(app);
+require("./routers/partnerRouts")(app);
 app.get("/", (req, res) => {
     res.json({ message: "Welcome to test node application." });
 });
 
-db.sequelize.sync({ force: false }).then(() => {
+db.sequelize.sync({ force: true }).then(() => {
     console.log("Drop and re-sync db.");
 });
 

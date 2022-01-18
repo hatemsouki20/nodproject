@@ -134,6 +134,7 @@ exports.showfilebyid =  async(req, res , next) =>{
     try {
        const {fileId} = req.params ;
        File.findAll({where :{id: fileId}}).then((file) =>{
+           console.log(file)
            return res.status(200).send({
                data : file[0],
            });
@@ -181,3 +182,76 @@ exports.addfilebyidProduct = async (req,res,next)=>{
 
 
 
+exports.findallproductbyIdfiles  = async (req,res,next)=>{
+
+
+
+
+
+
+
+    console.log("hello "+ req.body);
+    Produit.findAll({ include:[ { model: File } ] }) .then((dat) => {
+        const {fileId} = req.params ;
+
+        console.log("haw are you:"+ JSON.stringify( dat.files))
+
+        File.findAll({where : { id: fileId}}).then((file) =>{
+            return res.status(200).send({
+                data : file[0],
+               data : dat[0]
+            });
+        })
+
+
+
+
+
+    })
+
+
+}
+exports.updatePasword =async(req , res , next)=>{
+
+    const oldpass= req.body.oldpass;
+    const pwd = req.body.pwd;
+    // get user
+    const user = await User.findByPk(req.params.userId);
+    if (!user) {
+        return res.status(400).send('User not found');
+    }
+
+    // validate old password
+    const isValidPassword = await bcrypt.compare(oldpass, user.pwd);
+    if (!isValidPassword) {
+        return res.status(400).send('Please enter correct old password');
+    }
+
+
+    console.log(user);
+
+
+    bcrypt.hash(pwd, 10).then((hash) => {
+
+
+        User.update(
+            {
+                pwd: hash,
+            },
+            {
+                where: {id: user.id},
+            },
+        )
+            .then((data) => {
+                res.status(200).send({message: MSG.PWD_UPDATED});
+            })
+            .catch((err) => {
+                res.status(500).send({
+                    message: err.message || MSG.SQL_ERROR,
+                });
+            });
+    })
+
+
+
+}

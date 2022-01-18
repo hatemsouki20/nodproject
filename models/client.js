@@ -1,22 +1,22 @@
-module.exports =(sequelise , Sequelise)  =>{
+module.exports =(sequelize, Sequelize)  =>{
 
-    const Client = sequelise.define("client", {
+    const Client = sequelize.define("client", {
         firstName:{
-            type : Sequelise.STRING ,
+            type : Sequelize.STRING ,
 
         },
         lastName:{
-            type : Sequelise.STRING ,
+            type : Sequelize.STRING ,
 
         },
 
 
         address:{
-            type : Sequelise.STRING ,
+            type : Sequelize.STRING ,
 
         },
         phone:{
-            type : Sequelise.STRING ,
+            type : Sequelize.STRING ,
 
         },
 

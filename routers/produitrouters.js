@@ -9,5 +9,6 @@ module.exports = (app) => {
     router.post("/images", produit.uploadProductPic);
     router.get("/images/:fileId", produit.showfilebyid);
     router.post("/add", produit.addfilebyidProduct);
+    router.get("/all/:fileId", produit.findallproductbyIdfiles)
     app.use("/api/produit", router);
 }

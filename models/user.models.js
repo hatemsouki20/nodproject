@@ -20,6 +20,9 @@ const User = sequelise.define("user", {
     },
     activation_code: {
         type: Sequelise.STRING,
+    },
+    firstConnect :{
+        type : Sequelise.BOOLEAN , allowNull: false, defaultValue: true
     }
 
 });
